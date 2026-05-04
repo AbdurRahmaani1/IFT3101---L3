@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-class Program
+class ProductionCodeMachine
 {
     public class Adresse
     {
