@@ -7,7 +7,6 @@ class MarkAndCompact
     {
         public string name;
         public Racine(string name) => this.name = name;
-
         public List<Objet> Ref = [];
 
         public void add(Objet o)
