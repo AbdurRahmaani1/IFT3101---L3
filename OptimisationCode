@@ -1,0 +1,171 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using static Program;
+
+class Program
+{
+    public class Variable
+    {
+        public string name;
+        public int val;
+        public bool active;
+        public Op op;
+        public Variable(string Name) => Name = name;
+
+    }
+
+    public class Op
+    {
+        public string name;
+        public Op OP;
+        public List<Variable> V = [];
+        public List<Variable> Dep;
+        public string ligne;
+        public Op(string Name) => Name = name;
+    }
+
+    public class DAG {
+        public List<Variable> LV = new List<Variable>();
+        public Op Nop;
+
+        public DAG(string ligne, ref List<Variable> Var, ref List<Op> Op, ref List<Op> OpOpl)
+        {
+            
+            if (Var.Exists(v => v.name == ligne[0].ToString()))
+            {
+                Var.Remove(Var.Find(v => v.name == ligne[0].ToString()));
+            }
+                Variable VV = new Variable(ligne[0].ToString());
+                Var.Add(VV);
+                //op.V.Add(VV);
+                
+            if (ligne.Length < 4)// || Op.Count >0 && Op.Exists(o => ((o.Dep[0].name == ligne[0].ToString()) && (o.Dep[1].name == ligne[1].ToString())) || ((o.Dep[0].name == ligne[1].ToString()) && (o.Dep[1].name == ligne[0].ToString()))))
+            {
+                /*if (!(Var.Exists(v => v.name == ligne[2].ToString())))
+                {
+                    Var.Find(v => v.name == ligne[2].ToString()).op.V.Add(Var[Var.Count - 1]);
+                }
+                else
+                {*/
+                    VV = new Variable(ligne[2].ToString());
+                    Var.Add(VV);
+                    Nop = new Op("=");
+                    Nop.Dep.Add(Var.Find(v => v.name == ligne[0].ToString()));
+                    Nop.Dep.Add(Var.Find(v => v.name == ligne[2].ToString()));
+                    OpOpl.Add(Nop);
+                //}
+                // Op[Op.Count - 1].V.Remove[Op[Op.Count - 1].V[0]]
+            }
+            else
+            {
+
+                Op op = new Op(ligne[3].ToString());
+                Op.Add(op);
+                if (Var.Exists(v => v.name == ligne[0].ToString()))
+                {
+
+                    Var.Remove(Var.Find(v => v.name == ligne[0].ToString()));
+                    VV = new Variable(ligne[0].ToString());
+                    Var.Add(VV);
+                    VV.op = op;
+                    op.V.Add(VV);
+                }
+
+                for (int i = 2; i < 5; i++)
+                {
+                    if (i ==2 || i == 4)
+                    {
+                        /*if (i == 0)
+                        {
+                            if (Var.Exists(v => v.name == ligne[i].ToString()))
+                            {
+                                op.V.Add(Var.Find(v => v.name == ligne[i].ToString()));
+                                Var.Find(v => v.name == ligne[i].ToString()).op = op;
+                            }
+                            else
+                            {
+                                Variable VV = new Variable(ligne[i].ToString());
+                                op.V.Add(VV);
+                                VV.op = op;
+                            }
+                        }
+                        else
+                        {*/
+                        if (Var.Exists(v => v.name == ligne[i].ToString()))
+                        {
+                            op.Dep.Add(Var.Find(v => v.name == ligne[i].ToString()));
+                        if (Var.Find(v => v.name == ligne[i].ToString()).op != null)
+                        {
+                            op.OP = Var.Find(v => v.name == ligne[i].ToString()).op;
+                        }
+                            else
+                            {
+                                VV = new Variable(ligne[i].ToString());
+                                op.Dep.Add(VV);
+                            }
+                        }
+                        
+                    }
+                }
+
+                OpOpl.Add(op);
+            
+            }
+        }
+    }
+
+    static void Main()
+    {
+        List<Variable> Var = [];
+        List<Op> Op = [];
+        List<string> VarInactives = [];
+        List<Op> OpOpl = [];
+
+        VarInactives.Add("c");
+        for (int i = Op.Count - 1; i >= 0; i--)
+        {
+            for (int k = 0; k < Op[i].V.Count; k++)
+            {
+                for (int j = 0; j < VarInactives.Count; j++)
+                {
+                    {
+                        if (Op[i].V[k].name == VarInactives[j])
+                        {
+                            Op[i].V.Remove(Op[i].V[k]);
+                        }
+
+                    }
+                }
+            }
+        }
+
+
+        string input;
+
+        while (true)
+        {
+            System.Console.WriteLine("entrez une ligne. entrez 0 pour terminer");
+            input = System.Console.ReadLine();
+            if(input == "0")
+            {
+                break;
+            }
+            DAG dag = new DAG(input, ref Var, ref Op, ref OpOpl);
+        };
+
+        //affichage...
+        for (int i = 0; i < OpOpl.Count; i++)
+        {
+            if (OpOpl[i].name == "=")
+            {
+                System.Console.WriteLine(OpOpl[i].Dep[0].name + "=" + OpOpl[i].Dep[0].name);
+            }
+            else
+            {
+                System.Console.WriteLine(OpOpl[i].V[0].name + "=" + OpOpl[i].Dep[0].name + OpOpl[i].name + OpOpl[i].Dep[0].name);
+            }
+        }
+    }
+}
+
+
