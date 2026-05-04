@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Linq;
 
-class Program
+class MarkAndCompact
 {
     public class Racine
     {
